@@ -1,19 +1,17 @@
 {
-  "database": {
-    "rules": "database.rules.json"
-  },
-  "hosting": {
-    "public": "public",
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ],
-    "rewrites": [
-      {
-        "source": "**",
-        "destination": "/index.js"
-      }
-    ]
+    "hosting": {
+      "public": "/",
+      "rewrites": [
+        { "source": "/bot/**", "function": "bot" }
+      ],
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ]
+    
+    },
+    "database": {
+      "rules": "database.rules.json"
+    }
   }
-}

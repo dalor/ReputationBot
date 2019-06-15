@@ -1,8 +1,0 @@
-{
-	"name":"ReputationBot",
-	"version": 2,
-    "builds": [{ "src": "index.js", "use": "@now/node", "config": { "maxLambdaSize": "45mb" }}],
-    "env": {
-        "BOT_TOKEN": "@reputationbottoken"
-    }
-}

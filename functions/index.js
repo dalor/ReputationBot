@@ -1,12 +1,15 @@
 const functions = require('firebase-functions');
+const admin = require('firebase-admin');
 
 const Telegraf = require('telegraf');
+
+admin.initializeApp();
 
 const BOT_TOKEN = functions.config().bot.token;
 const bot = new Telegraf(BOT_TOKEN);
 
 
-const db = functions.database;
+const db = admin.database();
 
 const global_chat = db.ref('chat');
 
@@ -121,4 +124,6 @@ bot.hears(/\/stats/, (ctx) => {
   })
 })
 
-bot.startWebhook('/', null, 8080)
+exports.bot = functions.https.onRequest((req, res) => {
+  bot.handleUpdate(req.body, res);
+});
