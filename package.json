@@ -1,0 +1,17 @@
+{
+  "name": "reputationbot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "firebase-admin": "^8.1.0",
+    "telegraf": "^3.30.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "author": "dalor",
+  "license": "ISC"
+}
