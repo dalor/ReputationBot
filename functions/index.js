@@ -8,7 +8,6 @@ admin.initializeApp();
 const BOT_TOKEN = functions.config().bot.token;
 const bot = new Telegraf(BOT_TOKEN);
 
-
 const db = admin.database();
 
 const global_chat = db.ref('chat');
@@ -74,11 +73,16 @@ const vote_to_message = (chat, reply_mess, user, val, type, funct, error) => {
   funct();
 }
 
+const stringify_user = (user) => {
+  return `${user.first_name}${user.last_name ? ' ' + user.last_name: ''}(${user.id})`;
+}
+
 const check_mess = (ctx, funct) => {
     const reply_mess = ctx.message.reply_to_message;
     const chat = global_chat.child(ctx.chat.id);
     update_users(chat, ctx.message.from, reply_mess ? reply_mess.from: null);
     if (reply_mess) {
+      console.log(`${stringify_user(ctx.message.from)} -> ${stringify_user(reply_mess.from)} : ${ctx.message.text}`);
       funct(chat, reply_mess);
     }
     else {
