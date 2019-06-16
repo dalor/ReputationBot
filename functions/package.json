@@ -15,6 +15,6 @@
   "author": "dalor",
   "license": "ISC",
   "engines": {
-    "node": "8"
+    "node": "10"
   }
 }

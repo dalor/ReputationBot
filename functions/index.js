@@ -13,14 +13,10 @@ const db = admin.database();
 const global_chat = db.ref('chat');
 
 const get_value = (element, funct) => {
-  element.once('value').then((val) => {
-    funct(val.val())
+  return element.once('value').then((val) => {
+    return funct(val.val())
   });
 }
-
-bot.start((ctx) => ctx.reply('Send + or - to vote member in chat'));
-
-bot.help((ctx) => ctx.reply('Reply + or - to message to vote author\nReply /stats to get user reputation'))
 
 const update_user = (chat, user) => {
   chat.child('user/' + user.id).update(user);
@@ -34,8 +30,7 @@ const update_users = (chat, from_user, to_user) => {
 }
 
 const get_message = (chat, message_id, funct) => {
-  const mess = chat.child('message/' + message_id);
-  get_value(mess, funct);
+  return get_value(chat.child('message/' + message_id), funct);
 }
 
 const vote_types = {
@@ -57,8 +52,7 @@ const vote_to_message = (chat, reply_mess, user, val, type, funct, error) => {
   if (val) { // Voted earlier
     const vals = val[type];
     if (vals && vals[user]) { // Voted the same
-      error();
-      return;
+      return error();
     }
     else {
       const message = chat.child('message/' + reply_mess);
@@ -70,7 +64,7 @@ const vote_to_message = (chat, reply_mess, user, val, type, funct, error) => {
     }
   }
   vote_types[type].funct(chat, reply_mess, user);
-  funct();
+  return funct();
 }
 
 const stringify_user = (user) => {
@@ -83,10 +77,10 @@ const check_mess = (ctx, funct) => {
     update_users(chat, ctx.message.from, reply_mess ? reply_mess.from: null);
     if (reply_mess) {
       console.log(`${stringify_user(ctx.message.from)} -> ${stringify_user(reply_mess.from)} : ${ctx.message.text}`);
-      funct(chat, reply_mess);
+      return funct(chat, reply_mess);
     }
     else {
-      ctx.reply('Reply to message');
+      return ctx.reply('Reply to message');
     }
 }
 
@@ -100,17 +94,22 @@ const vote_user = (chat, user_id, delta) => {
 }
 
 const vote = (ctx, type) => {
-  check_mess(ctx, (chat, reply_mess) => {
-    get_message(chat, reply_mess.message_id, (val) => {
-      vote_to_message(chat, reply_mess.message_id, ctx.message.from.id, val, type, () => {
+  return check_mess(ctx, (chat, reply_mess) => {
+    return get_message(chat, reply_mess.message_id, (val) => {
+      return vote_to_message(chat, reply_mess.message_id, ctx.message.from.id, val, type, () => {
         vote_user(chat, reply_mess.from.id, vote_types[type].delta);
-        ctx.reply('OK');
+        // return ctx.reply('OK');
       }, () => {
-        ctx.reply('You have already voted ' + type);
+        // return ctx.reply('You have already voted ' + type);
       } );
     })
   })
 }
+
+
+bot.hears(/\/start/, (ctx) => ctx.replyWithHTML('Reply <b>+</b> or <b>-</b>'));
+
+bot.hears(/\/help/, (ctx) => ctx.replyWithHTML('Reply <b>+</b> or <b>-</b> to message to vote author\nReply /stats to get user <i>reputation</i>'))
 
 bot.hears(/\+/, (ctx) => {
   vote(ctx, '+');
@@ -121,13 +120,24 @@ bot.hears(/\-/, (ctx) => {
 })
 
 bot.hears(/\/stats/, (ctx) => {
-  check_mess(ctx, (chat, reply_mess) => {
-    get_value(chat.child('user/' + reply_mess.from.id), (val) => {
-      ctx.reply(`${val.first_name} reputation: ${val.reputation}`);
+  const chat_id = ctx.message.chat.id;
+  return check_mess(ctx, (chat, reply_mess) => {
+    return get_value(chat.child('user/' + reply_mess.from.id), (user) => {
+      return ctx.replyWithHTML(`<a href="tg://user?id=${user.id}">${user.first_name}${user.last_name ? ' ' + user.last_name: ''}</a> reputation: <b>${user.reputation}</b>`);
     });
   })
 })
 
+bot_url = '/bot/' + BOT_TOKEN
+
 exports.bot = functions.https.onRequest((req, res) => {
-  bot.handleUpdate(req.body, res);
+  if (req.url == bot_url) {
+    //console.log(req.body);
+    bot.handleUpdate(req.body, res).then(() => {
+      res.end('ok');
+    })
+  }
+  else {
+    res.end('WRONG');
+  }
 });
