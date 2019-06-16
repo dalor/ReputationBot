@@ -2,7 +2,7 @@
     "hosting": {
       "public": "/",
       "rewrites": [
-        { "source": "/bot/**", "function": "bot" }
+        { "source": "/reputbot/**", "function": "reputbot" }
       ],
       "ignore": [
         "firebase.json",
