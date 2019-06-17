@@ -13,7 +13,8 @@
   },
   "scripts": {
     "test": "echo \"None\" && exit 0",
-    "eslint": "eslint functions/."
+    "eslint": "eslint functions/.",
+    "deploy": "firebase deploy --token $FIREBASE_TOKEN"
   },
   "repository": {
     "type": "git",
