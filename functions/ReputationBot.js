@@ -57,7 +57,7 @@ const vote_to_message = (chat, reply_mess, user, val, type, funct, error) => {
     }
     else {
       const message = chat.child('message/' + reply_mess);
-      for (vote_type in vote_types) {
+      for (let vote_type in vote_types) {
         if (vote_type != type) {
           message.child(vote_type + '/' + user).set(null);
         }
@@ -115,7 +115,7 @@ bot.hears(/\+/, (ctx) => {
   vote(ctx, '+');
 })
 
-bot.hears(/\-/, (ctx) => {
+bot.hears(/-/, (ctx) => {
   vote(ctx, '-');
 })
 
@@ -127,7 +127,7 @@ bot.hears(/\/stats/, (ctx) => {
   })
 })
 
-bot_url = '/reputbot/' + BOT_TOKEN
+const bot_url = '/reputbot/' + BOT_TOKEN
 
 module.exports = (req, res) => {
   if (req.url == bot_url) {
