@@ -9,7 +9,8 @@
     "telegraf": "^3.30.1"
   },
   "devDependencies": {
-    "eslint": "^5.16.0"
+    "eslint": "^5.16.0",
+    "firebase-tools": "^7.0.0"
   },
   "scripts": {
     "test": "echo \"None\" && exit 0",
