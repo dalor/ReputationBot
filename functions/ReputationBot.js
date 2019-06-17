@@ -88,7 +88,7 @@ const check_mess = (ctx, funct) => {
 const vote_user = (chat, user_id, delta) => {
   const user = chat.child('user/' + user_id + '/reputation');
   user.transaction(function (current_value) {
-    return (current_value || 0) + 1;
+    return (current_value || 0) + delta;
   });
   
 }
