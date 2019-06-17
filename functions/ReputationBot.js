@@ -80,18 +80,17 @@ const check_mess = (ctx, funct) => {
       console.log(`${stringify_user(ctx.message.from)} -> ${stringify_user(reply_mess.from)} : ${ctx.message.text}`);
       return funct(chat, reply_mess);
     }
-    else {
-      return ctx.reply('Reply to message');
-    }
+    // else {
+    //   return ctx.reply('Reply to message');
+    // }
 }
 
 const vote_user = (chat, user_id, delta) => {
-  const user = chat.child('user/' + user_id);
-  get_value(user, (val) => {
-    let reputation = val.reputation;
-    reputation = reputation ? reputation + delta: delta;
-    user.update({reputation: reputation});
-  })
+  const user = chat.child('user/' + user_id + '/reputation');
+  user.transaction(function (current_value) {
+    return (current_value || 0) + 1;
+  });
+  
 }
 
 const vote = (ctx, type) => {
@@ -121,7 +120,6 @@ bot.hears(/\-/, (ctx) => {
 })
 
 bot.hears(/\/stats/, (ctx) => {
-  const chat_id = ctx.message.chat.id;
   return check_mess(ctx, (chat, reply_mess) => {
     return get_value(chat.child('user/' + reply_mess.from.id), (user) => {
       return ctx.replyWithHTML(`<a href="tg://user?id=${user.id}">${user.first_name}${user.last_name ? ' ' + user.last_name: ''}</a> reputation: <b>${user.reputation}</b>`);
